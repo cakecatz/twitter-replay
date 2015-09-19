@@ -1,0 +1,43 @@
+{
+  "name": "tweet-recoder",
+  "version": "0.0.0",
+  "private": true,
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "browserify -t babelify -t reactify src/app.jsx --outfile bundle.js",
+    "start": "node play.js",
+    "server": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ryo Narita",
+  "license": "MIT",
+  "dependencies": {
+    "babel": "^5.8.23",
+    "htmltojsx": "^0.2.4",
+    "moment": "^2.10.6",
+    "nedb": "^1.2.0",
+    "react": "^0.13.3",
+    "twitter": "^1.2.5",
+    "twitter-text": "^1.13.2"
+  },
+  "devDependencies": {
+    "babelify": "^6.3.0",
+    "browserify": "^11.1.0",
+    "gulp": "^3.9.0",
+    "gulp-util": "^3.0.6",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.4.0"
+  },
+  "browserify": {
+    "transform": [
+      [
+        "reactify",
+        {
+          "es6": true
+        }
+      ]
+    ]
+  }
+}
