@@ -1,6 +1,7 @@
 import React from 'react';
 import TweetBody from './TweetBody.jsx';
 import tw from 'twitter-text';
+import moment from 'moment';
 
 const tweetStyle = {
   color: 'black',
@@ -25,11 +26,11 @@ export default class Tweet extends React.Component {
   }
 
   getTime() {
-    return '9:00';
+    const time = this.props.tweet.created_at;
+    return moment(time, 'ddd MMM DD HH:mm:ss ZZ YYYY').format('LLL');
   }
 
   getAvatar() {
-    console.log(this.props.tweet);
     return <img className='avatar'
       src={this.props.tweet.user.profile_image_url} />;
   }

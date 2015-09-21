@@ -4,7 +4,6 @@ const moment = require('moment');
 export default class TweetPlayer {
   constructor(name) {
     this.name = name;
-    this.dbSetup();
     this.q_ = null;
     this.speed = 1.0;
     this.isEnd = null;
@@ -12,10 +11,16 @@ export default class TweetPlayer {
     this.seeker = null;
     this.isPause = false;
     this.tweets = null;
+    this.seekTo = 0;
+    this.dbSetup();
   }
 
   setSpeed(speed) {
     this.speed = speed;
+  }
+
+  setSeekTo(time) {
+    this.seekTo = time * 1000;
   }
 
   setInterval(interval) {
@@ -37,12 +42,41 @@ export default class TweetPlayer {
         throw err;
       }
       this.tweets = docs;
+      console.log('db ready');
     });
   }
 
   play(callback) {
     this.callback = callback;
     this.mainProcess();
+  }
+
+  getTime(time) {
+    return (new Date(time)).getTime();
+  }
+
+  init(callback) {
+    const startPoint = this.convertTime(
+      new Date(this.tweets[0].created_at)
+    );
+    const endPoint = this.convertTime(
+      this.getTime(this.tweets[0].created_at) + this.seekTo
+    );
+    console.log(startPoint, endPoint);
+    this.db.find({
+      created_at: {
+        $gte: startPoint,
+        $lt: endPoint,
+      },
+    }).sort({ created_at: 1 }).exec((err, docs) => {
+      if (err) {
+        throw err;
+      }
+
+      if (docs.length > 0) {
+        callback(docs);
+      }
+    });
   }
 
   mainProcess() {
@@ -89,7 +123,7 @@ export default class TweetPlayer {
   setupTimes() {
     this.startTime = new Date(this.tweets[0].created_at);
     this.endTime = new Date(this.tweets[this.tweets.length - 1].created_at);
-    this.seeker = this.startTime;
+    this.seeker = new Date(this.startTime.getTime() + this.seekTo);
   }
 
   convertTime(tweetDate) {

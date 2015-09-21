@@ -5,17 +5,24 @@ const TweetPlayer = require('./libs/TweetPlayer');
 class TweetReplayServer {
   constructor(track) {
     this.port = 8080;
+    const player = new TweetPlayer(track);
+    player.setSpeed(1.0);
+    player.setInterval(500);
+    player.setSeekTo(20);
     this.server = ws.createServer((connection) => {
-      const player = new TweetPlayer(track);
-      player.setSpeed(5);
-      player.setInterval(500);
-
       connection.on('exit', () => {
         console.log('exit');
       });
 
       connection.on('text', (str) => {
         switch (str) {
+        case 'init':
+          player.init((tweets) => {
+            if (connection.readyState === connection.OPEN) {
+              connection.sendText(JSON.stringify(tweets));
+            }
+          });
+          break;
         case 'start':
           player.play((tweets) => {
             if (connection.readyState === connection.OPEN) {
@@ -44,5 +51,5 @@ class TweetReplayServer {
   }
 }
 
-const replayer = new TweetReplayServer('GATE');
+const replayer = new TweetReplayServer('matz');
 replayer.start();

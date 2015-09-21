@@ -3,6 +3,7 @@ $theme-color: #1abc9c;
 $username-color: #8899a6;
 $time-color: #8899a6;
 $fullname-color: #292f33;
+$timeline-height: 800px;
 
 
 @mixin tweet() {
@@ -64,7 +65,7 @@ html, body {
 
 .tweets {
   overflow-y: scroll;
-  height: 500px;
+  height: $timeline-height;
   width: 590px;
   ol {
     list-style: none;
@@ -78,4 +79,8 @@ html, body {
       }
     }
   }
+}
+
+.youtube-player {
+  float: left;
 }

@@ -18,6 +18,7 @@
     "moment": "^2.10.6",
     "nedb": "^1.2.0",
     "react": "^0.13.3",
+    "react-youtube": "^4.1.2",
     "twitter": "^1.2.5",
     "twitter-text": "^1.13.2"
   },
