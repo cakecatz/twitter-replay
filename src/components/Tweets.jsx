@@ -6,10 +6,10 @@ export default class Tweets extends React.Component {
   }
 
   render() {
-    return <div className="tweets">
+    return <div className="tweets"><ol>
       {this.props.tweets.map((tweet) => {
-        return <Tweet tweet={tweet} />;
-      })}
-    </div>;
+        return <li><Tweet tweet={tweet} /></li>;
+      }).reverse()}
+    </ol></div>;
   }
 }

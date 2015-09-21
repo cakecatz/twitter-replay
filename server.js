@@ -1,32 +1,70 @@
 require('babel/register');
 const ws = require('nodejs-websocket');
+const TweetPlayer = require('./libs/TweetPlayer');
 
-function play(name, conn) {
-  const TweetPlayer = require('./libs/TweetPlayer');
-  const player = new TweetPlayer(name);
-  player.play((tweets) => {
-    if (conn.readyState !== 1) {
-      player.stop();
-      return;
+class TweetReplayServer {
+  constructor(track) {
+    this.port = 8080;
+    this.player = null;
+    this.track = track;
+    this.server = ws.createServer((connection) => {
+      connection.on('exit', () => {
+        console.log('exit');
+      });
+
+      connection.on('text', (str) => {
+        switch (str) {
+        case 'start':
+          if (this.player === null) {
+            this.initPlayer(this.track);
+          }
+          this.play(connection);
+          break;
+        case 'stop':
+          this.stop();
+          break;
+        case 'pause':
+          this.pause();
+          break;
+        default:
+          break;
+        }
+      });
+    });
+  }
+
+  initPlayer(name) {
+    this.player = new TweetPlayer(name);
+    this.player.setSpeed(5);
+    this.player.setInterval(250);
+  }
+
+  play(connection) {
+    this.player.play((tweets) => {
+      if (connection.readyState !== 1) {
+        this.player.stop();
+        return;
+      }
+      connection.sendText(JSON.stringify(tweets));
+    });
+  }
+
+  stop() {
+    if (this.player) {
+      this.player.stop();
     }
-    conn.sendText(JSON.stringify(tweets));
-  });
+  }
+
+  start() {
+    this.server.listen(this.port);
+  }
+
+  pause() {
+    if (this.player) {
+      this.player.pause();
+    }
+  }
 }
 
-const server = ws.createServer((conn) => {
-  conn.on('exit', () => {
-    console.log('exit');
-  });
-
-  conn.on('text', (str) => {
-    switch (str) {
-    case 'start':
-      play('GATE', conn);
-      break;
-    default:
-      break;
-    }
-  });
-});
-
-server.listen(8080);
+const replayer = new TweetReplayServer('GATE');
+replayer.start();

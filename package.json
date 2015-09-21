@@ -7,7 +7,7 @@
   "scripts": {
     "build": "browserify -t babelify -t reactify src/app.jsx --outfile bundle.js",
     "start": "node play.js",
-    "server": "node server.js",
+    "server": "babel server.js | node",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Ryo Narita",

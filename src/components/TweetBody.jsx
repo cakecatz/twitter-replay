@@ -1,7 +1,7 @@
 import React from 'react';
 import twitterText from 'twitter-text';
 
-class Anchor extends React.Component {
+export class Anchor extends React.Component {
   render() {
     return <a
       target="external_link"

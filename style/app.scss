@@ -1,4 +1,38 @@
+$border-color: #e1e8ed;
+$theme-color: #1abc9c;
+$username-color: #8899a6;
+$fullname-color: #292f33;
+
 html, body {
   margin: 0px;
   font-family: '.SFNSText-Regular', 'SF UI Text', 'Lucida Grande', 'Segoe UI', Ubuntu, Cantarell, sans-serif;
+
+  .tweets {
+    padding: 10px;
+    overflow-y: scroll;
+    height: 500px;
+    width: 590px;
+    ol {
+      list-style: none;
+      border-top: 1px solid $border-color;
+
+      li {
+        border-right: 1px solid $border-color;
+        border-left: 1px solid $border-color;
+        .tweet {
+          border-bottom: 1px solid $border-color;
+          a {
+            color: $theme-color;
+            text-decoration: none;
+          }
+          span.fullname {
+            color: $fullname-color;
+          }
+          span.username {
+            color: $username-color;
+          }
+        }
+      }
+    }
+  }
 }

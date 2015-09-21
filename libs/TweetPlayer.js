@@ -6,7 +6,18 @@ export default class TweetPlayer {
     this.name = name;
     this.dbSetup();
     this.q_ = null;
+    this.speed = 1.0;
     this.interval = 1000; // Milliseconds
+    this.seeker = null;
+    this.isPause = false;
+  }
+
+  setSpeed(speed) {
+    this.speed = speed;
+  }
+
+  setInterval(interval) {
+    this.interval = interval;
   }
 
   dbSetup() {
@@ -36,18 +47,27 @@ export default class TweetPlayer {
       return;
     }
 
-    this.startTime = new Date(this.tweets[0].created_at);
-    this.endTime = new Date(this.tweets[this.tweets.length - 1].created_at);
-    console.log(this.convertTime(this.startTime), ':', this.convertTime(this.endTime));
+    if (!this.isPause || this.endTime < this.seeker) {
+      this.setupTimes();
+    } else {
+      this.isPause = false;
+    }
 
     this.p_ = setInterval(() => {
-      if (this.endTime < this.startTime) {
+      if (this.endTime < this.seeker) {
+        this.isPause = false;
         this.stop();
       } else {
+        const startPoint = this.convertTime(this.seeker);
+        this.seeker = new Date( this.seeker.getTime() + (this.interval * this.speed) );
+        const endPoint = this.convertTime(this.seeker);
+
+        console.log(startPoint, endPoint);
+
         this.db.find({
           created_at: {
-            $gte: this.convertTime(this.startTime),
-            $lt: this.convertTime(this.startTime) + this.interval,
+            $gte: startPoint,
+            $lt: endPoint,
           },
         }).sort({ created_at: 1 }).exec((err, docs) => {
           if (err) {
@@ -58,10 +78,14 @@ export default class TweetPlayer {
             this.callback(docs);
           }
         });
-
-        this.startTime =  new Date( this.startTime.getTime() + this.interval);
       }
     }, this.interval);
+  }
+
+  setupTimes() {
+    this.startTime = new Date(this.tweets[0].created_at);
+    this.endTime = new Date(this.tweets[this.tweets.length - 1].created_at);
+    this.seeker = this.startTime;
   }
 
   convertTime(tweetDate) {
@@ -69,6 +93,11 @@ export default class TweetPlayer {
   }
 
   stop() {
+    clearInterval(this.p_);
+  }
+
+  pause() {
+    this.isPause = true;
     clearInterval(this.p_);
   }
 }

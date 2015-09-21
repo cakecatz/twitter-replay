@@ -23,12 +23,22 @@ export default class TwitterReplayer extends React.Component {
 
   render() {
     return <div>
-      <button className="play" onClick={this.handleClick.bind(this)}>Play!</button>
+      <button className="play" onClick={this.handlePlayButton.bind(this)}>Play!</button>
+      <button className="pause" onClick={this.handlePauseButton.bind(this)}>Pause!</button>
+      <button className="stop" onClick={this.handleStopButton.bind(this)}>Stop!</button>
       <Tweets tweets={this.state.tweets}/>
     </div>;
   }
 
-  handleClick() {
+  handlePlayButton() {
     this.ws.send('start');
+  }
+
+  handleStopButton() {
+    this.ws.send('stop');
+  }
+
+  handlePauseButton() {
+    this.ws.send('pause');
   }
 }
