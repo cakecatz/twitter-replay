@@ -5,9 +5,11 @@ const TweetPlayer = require('./libs/TweetPlayer');
 class TweetReplayServer {
   constructor(track) {
     this.port = 8080;
-    this.player = null;
-    this.track = track;
     this.server = ws.createServer((connection) => {
+      const player = new TweetPlayer(track);
+      player.setSpeed(5);
+      player.setInterval(500);
+
       connection.on('exit', () => {
         console.log('exit');
       });
@@ -15,16 +17,20 @@ class TweetReplayServer {
       connection.on('text', (str) => {
         switch (str) {
         case 'start':
-          if (this.player === null) {
-            this.initPlayer(this.track);
-          }
-          this.play(connection);
+          player.play((tweets) => {
+            if (connection.readyState === connection.OPEN) {
+              connection.sendText(JSON.stringify(tweets));
+            } else {
+              player.stop();
+              return;
+            }
+          });
           break;
         case 'stop':
-          this.stop();
+          player.stop();
           break;
         case 'pause':
-          this.pause();
+          player.pause();
           break;
         default:
           break;
@@ -33,36 +39,8 @@ class TweetReplayServer {
     });
   }
 
-  initPlayer(name) {
-    this.player = new TweetPlayer(name);
-    this.player.setSpeed(5);
-    this.player.setInterval(250);
-  }
-
-  play(connection) {
-    this.player.play((tweets) => {
-      if (connection.readyState !== 1) {
-        this.player.stop();
-        return;
-      }
-      connection.sendText(JSON.stringify(tweets));
-    });
-  }
-
-  stop() {
-    if (this.player) {
-      this.player.stop();
-    }
-  }
-
   start() {
     this.server.listen(this.port);
-  }
-
-  pause() {
-    if (this.player) {
-      this.player.pause();
-    }
   }
 }
 

@@ -1,37 +1,80 @@
 $border-color: #e1e8ed;
 $theme-color: #1abc9c;
 $username-color: #8899a6;
+$time-color: #8899a6;
 $fullname-color: #292f33;
+
+
+@mixin tweet() {
+  padding: 5px;
+  border-bottom: 1px solid $border-color;
+  min-height: 51px;
+
+  a {
+    color: $theme-color;
+    text-decoration: none;
+  }
+  span.fullname {
+    font-size: 14px;
+    color: $fullname-color;
+  }
+  span.username {
+    font-size: 13px;
+    color: $username-color;
+  }
+
+  .preview {
+    margin: 10px 0 0;
+    .media.media-thumbnail {
+      max-height: 253px;
+      overflow: hidden;
+      border-radius: 5px;
+      display: block;
+      position: relative;
+    }
+  }
+
+  .time {
+    font-size: 13px;
+    color: $time-color;
+    &::before {
+      content: "  \00b7  ";
+    }
+  }
+
+  .tweet-body {
+    font-size: 16px;
+  }
+
+  .content {
+    margin-left: 58px;
+  }
+
+  .avatar {
+    float: left;
+    margin-left: -58px;
+    border-radius: 5px;
+  }
+}
 
 html, body {
   margin: 0px;
   font-family: '.SFNSText-Regular', 'SF UI Text', 'Lucida Grande', 'Segoe UI', Ubuntu, Cantarell, sans-serif;
+}
 
-  .tweets {
-    padding: 10px;
-    overflow-y: scroll;
-    height: 500px;
-    width: 590px;
-    ol {
-      list-style: none;
-      border-top: 1px solid $border-color;
+.tweets {
+  overflow-y: scroll;
+  height: 500px;
+  width: 590px;
+  ol {
+    list-style: none;
+    border-top: 1px solid $border-color;
 
-      li {
-        border-right: 1px solid $border-color;
-        border-left: 1px solid $border-color;
-        .tweet {
-          border-bottom: 1px solid $border-color;
-          a {
-            color: $theme-color;
-            text-decoration: none;
-          }
-          span.fullname {
-            color: $fullname-color;
-          }
-          span.username {
-            color: $username-color;
-          }
-        }
+    li {
+      border-right: 1px solid $border-color;
+      border-left: 1px solid $border-color;
+      .tweet {
+        @include tweet();
       }
     }
   }

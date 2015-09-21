@@ -24,11 +24,22 @@ export default class Tweet extends React.Component {
     return `@${this.props.tweet.user.screen_name}`;
   }
 
+  getTime() {
+    return '9:00';
+  }
+
+  getAvatar() {
+    console.log(this.props.tweet);
+    return <img className='avatar'
+      src={this.props.tweet.user.profile_image_url} />;
+  }
+
   getTweetedUser() {
     return <a
       className="user-identifier"
       target="external_link"
       href={this.getUserLink()}>
+      {this.getAvatar()}
       <span className="fullname">
         {this.getFullname()}
       </span>
@@ -36,13 +47,18 @@ export default class Tweet extends React.Component {
       <span className="username">
         {this.getUsername()}
       </span>
+      <small className="time">
+        {this.getTime()}
+      </small>
     </a>;
   }
 
   render() {
     return <div style={tweetStyle} className='tweet' key={this.props.tweet.id}>
-      {this.getTweetedUser()}
-      <TweetBody tweet={this.props.tweet} />
+      <div className="content">
+        {this.getTweetedUser()}
+        <TweetBody tweet={this.props.tweet} />
+      </div>
     </div>;
   }
 }

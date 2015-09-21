@@ -7,9 +7,11 @@ export default class TweetPlayer {
     this.dbSetup();
     this.q_ = null;
     this.speed = 1.0;
+    this.isEnd = null;
     this.interval = 1000; // Milliseconds
     this.seeker = null;
     this.isPause = false;
+    this.tweets = null;
   }
 
   setSpeed(speed) {
@@ -29,22 +31,23 @@ export default class TweetPlayer {
         throw err;
       }
     });
+    // TODO: 取得するのは最初と最後のツイートだけでいい
     this.db.find({}).sort({ created_at: 1 }).exec((err, docs) => {
       if (err) {
         throw err;
       }
       this.tweets = docs;
-      if (this.q_) {
-        this.q_();
-      }
     });
   }
 
   play(callback) {
-    if (this.q_ === null) {
-      this.callback = callback;
-      this.q_ = this.play;
-      return;
+    this.callback = callback;
+    this.mainProcess();
+  }
+
+  mainProcess() {
+    if (!this.tweets) {
+      setTimeout(this.mainProcess, 100);
     }
 
     if (!this.isPause || this.endTime < this.seeker) {
@@ -56,6 +59,7 @@ export default class TweetPlayer {
     this.p_ = setInterval(() => {
       if (this.endTime < this.seeker) {
         this.isPause = false;
+        this.isEnd = true;
         this.stop();
       } else {
         const startPoint = this.convertTime(this.seeker);
@@ -93,6 +97,7 @@ export default class TweetPlayer {
   }
 
   stop() {
+    this.isPause = false;
     clearInterval(this.p_);
   }
 

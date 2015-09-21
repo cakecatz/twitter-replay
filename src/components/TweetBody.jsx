@@ -75,6 +75,26 @@ class Cashtag extends React.Component {
   }
 }
 
+class Media extends React.Component {
+  getStyle() {
+    return {
+      width: '100%',
+      marginTop: '-15px',
+    };
+  }
+
+  render() {
+    return <div className="preview">
+      <a className="media media-thumbnail">
+        <img
+          src={this.props.entity.media_url}
+          style={this.getStyle()}
+          alt="Embedded image permalink"/>
+      </a>
+    </div>;
+  }
+}
+
 class Text extends React.Component {
   render() {
     return <span
@@ -104,6 +124,7 @@ export default class TweetBody extends React.Component {
         break;
       case 'media':
         console.log(entity);
+        components.push(<Media entity={entity}/>);
         break;
       case 'symbols':
         components.push(<Cashtag entity={entity}/>);
@@ -140,7 +161,6 @@ export default class TweetBody extends React.Component {
       }
       return 0;
     });
-    console.log(entities);
     return entities;
   }
 
