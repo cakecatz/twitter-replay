@@ -18,7 +18,6 @@ export default class TwitterReplayer extends React.Component {
       this.setState({
         tweets: this.state.tweets.concat(tweets),
       });
-      console.log(tweets);
     };
   }
 
